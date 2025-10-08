@@ -1,9 +1,6 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  
-
-
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -34,69 +31,114 @@
     <!-- App css -->
     <link id="color" rel="stylesheet" href="assets/css/color-1.css" media="screen">
     <link rel="stylesheet" href="assets/css/style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+   
+         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
   </head>
   <body>
     <!-- tap on top starts-->
     <div class="tap-top"><i class="iconly-Arrow-Up icli"></i></div>
-    <!-- tap on tap ends-->
-    <!-- loader-->
-    <div class="loader-wrapper">
-      <div class="loader"><span></span><span></span><span></span><span></span><span></span></div>
-    </div>
-    <!-- login page start-->
-    <div class="container-fluid p-0"> 
-      <div class="row m-0">
-        <!-- <div class="col-xl-7 login_bs_validation p-0"><img class="bg-img-cover bg-center" src="assets/images/login/1.jpg" alt="looginpage"></div> -->
-        <div class="col-xl-5 p-0"> 
+   
+    <div class="container-fluid">
+      <div class="row">
+        <!-- <div class="col-xl-7 login_one_image"><img class="bg-img-cover bg-center" src="assets/images/login/2.jpg" alt="looginpage"></div> -->
+        <div class="col-xl-5 p-0">
           <div class="login-card login-dark login-bg">
             <div>
-              <div><a class="logo text-center" href="index.html"><img class="img-fluid for-light m-auto" src="assets/images/logo/logo1.png" alt="looginpage"><img class="img-fluid for-dark" src="assets/images/logo/logo-dark.png" alt="logo"></a></div>
+              <div><a class="logo" href="index.php"><img class="img-fluid for-light m-auto" src="include/logo.png" alt="looginpage"><img class="for-dark" src="include/logo.png" alt="logo"></a></div>
               <div class="login-main"> 
-                <form class="theme-form">
-                  <h2>Create your account</h2>
-                  <p>Enter your personal details to create account</p>
-                  <div class="form-group">
-                    <label class="col-form-label pt-0">Your Name</label>
-                    <div class="row g-2">
-                      <div class="col-2">
-                        <input class="form-control" type="text" required="" placeholder="First name">
-                      </div>
-                      <!-- <div class="col-6">
-                        <input class="form-control" type="text" required="" placeholder="Last name">
-                      </div> -->
-                    </div>
+                <form class="theme-form" method='POST'>
+                  <h2 class="text-center">Sign in to account</h2>
+                  <p class="text-center">Enter your email &amp; password to login</p>
+
+                   <div class="form-group">
+                    <label class="col-form-label">Email Address</label>
+                    <input class="form-control" type="text" required="" Name='name' placeholder="name">
                   </div>
                   <div class="form-group">
                     <label class="col-form-label">Email Address</label>
-                    <input class="form-control" type="email" required="" placeholder="Test@gmail.com">
+                    <input class="form-control" type="email" required="" Name='email' placeholder="Test@gmail.com">
                   </div>
                   <div class="form-group">
                     <label class="col-form-label">Password</label>
                     <div class="form-input position-relative">
-                      <input class="form-control" type="password" name="login[password]" required="" placeholder="*********">
-                      <div class="show-hide"><span class="show"></span></div>
+                      <input class="form-control" type="password" name="pass" required="" placeholder="*********">
+                      <div class="show-hide"><span class="show">                   </span></div>
                     </div>
                   </div>
                   <div class="form-group mb-0 checkbox-checked">
                     <div class="form-check checkbox-solid-info">
                       <input class="form-check-input" id="solid6" type="checkbox">
-                      <label class="form-check-label" for="solid6">Agree with</label><a class="ms-3 link" href="forget-password.html">Privacy Policy</a>
+                      <label class="form-check-label" for="solid6">Remember password</label>
+                    </div><a class="link" href="forget-password.html">Forgot password?</a>
+                    <div class="text-end mt-3">
+                      <!-- <button class="btn btn-primary btn-block w-100"  type="submit">Sign in                 </button> -->
+                                            <input class="btn btn-primary btn-block w-100" id="" name='submit' type="submit">
                     </div>
-                    <button class="btn btn-primary btn-block w-100 mt-3" type="submit">unlock</button>
                   </div>
                   <div class="login-social-title">
                     <h6>Or Sign in with                 </h6>
                   </div>
-                  <div class="form-group">
-                   
-                  </div>
-                  <p class="mt-4 mb-0 text-center">Already have an account?<a class="ms-2" href="login.php">Sign in</a></p>
+                  
+                  <p class="mt-4 mb-0 text-center">Don't have account?<a class="ms-2" href="sign.php">Create Account</a></p>
                 </form>
-                <?php
-                include('include/db.php');
-                
-                
-                ?>
+
+             <?php
+require_once('include/db.php'); 
+$date = date("Y-m-d");
+
+if (isset($_POST['submit'])) {
+
+    $name     = mysqli_real_escape_string($conn, $_POST['name']);
+    $email    = mysqli_real_escape_string($conn, $_POST['email']);
+    $password = mysqli_real_escape_string($conn, $_POST['pass']);
+  
+
+    if (empty($name) || empty($email) || empty($password)) {
+        echo "<script>alert('Please fill in all fields.');</script>";
+    } else {
+        
+        $check = mysqli_query($conn, "SELECT uniqe_id FROM user WHERE email = '$email'");
+        if (mysqli_num_rows($check) > 0) {
+            echo "<script>
+                const notyf = new Notyf();
+                notyf.error('❌ Email already registered!');
+            </script>";
+        } else {
+
+
+			 $query = "SELECT `uniqe_id` FROM `user` ORDER BY `status` DESC LIMIT 1";
+                            $result = mysqli_query($conn, $query);
+
+                            if ($result && mysqli_num_rows($result) > 0) {
+                                $row = mysqli_fetch_assoc($result);
+                                $lastId = $row['uniqe_id'];
+                                $numericPart = str_replace("SR", "", $lastId);
+                                $newNumericPart = str_pad((int)$numericPart + 1, 7, "0", STR_PAD_LEFT);
+                                $newStatusId = "SR" . $newNumericPart;
+                            } else {
+                                $newStatusId = "SR0000001"; 
+                            }
+            $insertQuery = "INSERT INTO `user` (`name`, `email`, `pass`, `date`, `status`, `uniqe_id`) 
+                            VALUES ('$name', '$email', '$password', '$date', 'active', '$newStatusId')";
+
+            if (mysqli_query($conn, $insertQuery)) {
+                echo "<script>
+                    const notyf = new Notyf();
+                    notyf.success('✅ Registration successful!');
+                    setTimeout(() => { window.location.href = 'login.php'; }, 1000);
+                </script>";
+            } else {
+                echo "<script>alert('Error: Unable to register.');</script>";
+            }
+        }
+    }
+}
+?>
               </div>
             </div>
           </div>
@@ -116,5 +158,5 @@
     </div>
   </body>
 
-<!-- Mirrored from admin.pixelstrap.net/admiro/template/sign-up-two.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 07 Oct 2025 04:09:24 GMT -->
+
 </html>

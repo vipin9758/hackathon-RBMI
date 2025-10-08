@@ -2,7 +2,8 @@
 <!DOCTYPE html>
 <html lang="en">
   
-<!-- Mirrored from admin.pixelstrap.net/admiro/template/login_one.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 07 Oct 2025 04:09:24 GMT -->
+
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -32,35 +33,33 @@
     <!-- App css -->
     <link id="color" rel="stylesheet" href="assets/css/color-1.css" media="screen">
     <link rel="stylesheet" href="assets/css/style.css">
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
   </head>
   <body>
-    <!-- tap on top starts-->
+   
     <div class="tap-top"><i class="iconly-Arrow-Up icli"></i></div>
-    <!-- tap on tap ends-->
-    <!-- loader-->
-    <!-- <div class="loader-wrapper">
-      <div class="loader"><span></span><span></span><span></span><span></span><span></span></div>
-    </div> -->
-    <!-- login page start-->
+    
     <div class="container-fluid">
       <div class="row">
-        <!-- <div class="col-xl-7 login_one_image"><img class="bg-img-cover bg-center" src="assets/images/login/2.jpg" alt="looginpage"></div> -->
+        <div class="col-xl-7 login_one_image"><img class="bg-img-cover bg-center" src="assets/images/login/2.jpg" alt="looginpage"></div>
         <div class="col-xl-5 p-0">
           <div class="login-card login-dark login-bg">
             <div>
               <div><a class="logo" href="index.php"><img class="img-fluid for-light m-auto" src="include/logo.png" alt="looginpage"><img class="for-dark" src="include/logo.png" alt="logo"></a></div>
               <div class="login-main"> 
-                <form class="theme-form" method='POST'>
+                <form class="theme-form"   action='' method='POST'>
                   <h2 class="text-center">Sign in to account</h2>
                   <p class="text-center">Enter your email &amp; password to login</p>
                   <div class="form-group">
                     <label class="col-form-label">Email Address</label>
-                    <input class="form-control" type="email" required="" placeholder="Test@gmail.com">
+                    <input class="form-control" type="email" required="" name='email' placeholder="Test@gmail.com">
                   </div>
                   <div class="form-group">
                     <label class="col-form-label">Password</label>
                     <div class="form-input position-relative">
-                      <input class="form-control" type="password" name="login[password]" required="" placeholder="*********">
+                      <input class="form-control" type="password" name="pass" required="" placeholder="*********">
                       <div class="show-hide"><span class="show">                   </span></div>
                     </div>
                   </div>
@@ -70,28 +69,62 @@
                       <label class="form-check-label" for="solid6">Remember password</label>
                     </div><a class="link" href="forget-password.html">Forgot password?</a>
                     <div class="text-end mt-3">
-                      <!-- <button class="btn btn-primary btn-block w-100"  type="submit">Sign in                 </button> -->
-                                            <input class="btn btn-primary btn-block w-100" id="" name='submit' type="submit">
+                      <!-- <button class="btn btn-primary btn-block w-100" type="submit">Sign in                 </button> -->
+                        <input class="btn btn-primary btn-block w-100" id="solid6" name='submit'  type="submit"> 
                     </div>
                   </div>
                   <div class="login-social-title">
-                    <h6>Or Sign in with                 </h6>
+                    <h6>Or Sign in with               </h6>
                   </div>
-                  
+                 
                   <p class="mt-4 mb-0 text-center">Don't have account?<a class="ms-2" href="sign.php">Create Account</a></p>
                 </form>
 
-                <?php
-                
-              if(isset($_POST['submit']))
-              
-                print_r($_POST);
-            
+                  <?php
+	// Start the session at the top
+	
 
-                
+	// Include database connection
+	include('include/db.php');
+	include('include/function.php');
 
+	if (isset($_POST['submit'])) {
+        
+ 
+		
+		$name = htmlspecialchars(trim($_POST['email']));
+      
+		$password = htmlspecialchars(trim($_POST['pass']));
 
-                ?>
+   
+		$query = "SELECT * FROM `user` WHERE `email` = ? AND `pass` = ?";
+         
+		$stmt = $conn->prepare($query);
+
+		$stmt->bind_param("ss", $name, $password);
+		$stmt->execute();
+		$result = $stmt->get_result();
+
+		if ($result->num_rows > 0) {
+
+		
+			session_start();
+			$user = $result->fetch_assoc();
+     
+			$_SESSION['user'] = $user['name'] ;
+			$_SESSION['email'] = $user['email'];
+			$_SESSION['id'] = $user['uniqe_id'];
+     
+sweet('login in Dashboard','',   'success');
+go('dashboard.php','2000');
+						exit;
+		} else {
+
+			echo "<script>const notyf = new Notyf();
+notyf.error('User name and password Do not Match');</script>";
+		}
+	}
+	?>
               </div>
             </div>
           </div>
@@ -111,5 +144,5 @@
     </div>
   </body>
 
-<!-- Mirrored from admin.pixelstrap.net/admiro/template/login_one.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 07 Oct 2025 04:09:24 GMT -->
+
 </html>
